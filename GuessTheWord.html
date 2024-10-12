@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guess the Word Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        #wordDisplay {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        #guessInput {
+            padding: 10px;
+            font-size: 18px;
+            width: 50px;
+            text-align: center;
+        }
+        #guessButton {
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        #message {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        #attempts {
+            margin-top: 10px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Guess the Word Game</h1>
+        <div id="wordDisplay">_ _ _ _ _</div>
+        <input type="text" id="guessInput" maxlength="1" placeholder="A-Z">
+        <button id="guessButton">Guess</button>
+        <div id="message"></div>
+        <div id="attempts">Attempts left: 6</div>
+    </div>
+
+    <script>
+        // List of words to guess from
+        const words = ["apple", "banana", "grapes", "orange", "mango", "peach"];
+        
+        // Select a random word
+        let wordToGuess = words[Math.floor(Math.random() * words.length)];
+        let guessedLetters = Array(wordToGuess.length).fill('_');
+        let attemptsLeft = 6;
+        
+        // Display the initial word with underscores
+        document.getElementById('wordDisplay').innerText = guessedLetters.join(' ');
+
+        // Handle guessing
+        document.getElementById('guessButton').addEventListener('click', function() {
+            const guessInput = document.getElementById('guessInput');
+            const guessedLetter = guessInput.value.toLowerCase();
+            guessInput.value = ''; // Clear input
+
+            if (guessedLetter.length !== 1 || !/[a-z]/.test(guessedLetter)) {
+                document.getElementById('message').innerText = 'Please enter a valid letter.';
+                return;
+            }
+
+            let isCorrectGuess = false;
+
+            // Check if guessed letter is in the word
+            for (let i = 0; i < wordToGuess.length; i++) {
+                if (wordToGuess[i] === guessedLetter && guessedLetters[i] === '_') {
+                    guessedLetters[i] = guessedLetter;
+                    isCorrectGuess = true;
+                }
+            }
+
+            // Update the word display
+            document.getElementById('wordDisplay').innerText = guessedLetters.join(' ');
+
+            // If the guess was incorrect, decrement attempts
+            if (!isCorrectGuess) {
+                attemptsLeft--;
+                document.getElementById('attempts').innerText = `Attempts left: ${attemptsLeft}`;
+            }
+
+            // Check for win or lose conditions
+            if (guessedLetters.join('') === wordToGuess) {
+                document.getElementById('message').innerText = 'Congratulations! You guessed the word!';
+                document.getElementById('guessButton').disabled = true; // Disable further guessing
+            } else if (attemptsLeft === 0) {
+                document.getElementById('message').innerText = `Game Over! The word was: ${wordToGuess}`;
+                document.getElementById('guessButton').disabled = true; // Disable further guessing
+            }
+        });
+    </script>
+</body>
+</html>
